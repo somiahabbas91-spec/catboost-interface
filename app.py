@@ -95,8 +95,9 @@ Fy = st.number_input("Fy", value=350.0)
 # PREDICT BUTTON
 # =========================
 if st.button("Predict"):
-input_data = {
-   "geometry": {
+
+    input_data = {
+        "geometry": {
             "L": L,
             "H1": H1,
             "Bf1": Bf1,
@@ -114,13 +115,12 @@ input_data = {
         },
         "material": {
             "Fy": Fy,
-        },
+        }
     }
 
     result = interface.predict_with_confidence(input_data)
 
     st.success("Prediction completed")
-
     st.write("Failure mode:", result["failure_mode"])
     st.write("Confidence:", result["confidence"])
     st.write("Ultimate load:", result["ultimate_load"])
