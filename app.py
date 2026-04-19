@@ -95,7 +95,7 @@ Fy = st.number_input("Fy", value=350.0)
 # PREDICT BUTTON
 # =========================
 if st.button("Predict"):
-
+input_data = {
    "geometry": {
             "L": L,
             "H1": H1,
