@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
 import joblib
-from unified_interface import CatBoostUnifiedInterface
+class CatBoostUnifiedInterface:
+    ...
 # =========================
 # LOAD INTERFACE
 # =========================
 interface = CatBoostUnifiedInterface(
-    clf_model_path=r"D:\data AI\SAMSOUMA\best_catboost_classification.pkl",
-    reg_model_path=r"D:\data AI\SAMSOUMA\best_catboost_regression.pkl",
+    clf_model_path="best_catboost_classification.pkl",
+    reg_model_path="best_catboost_regression.pkl",
     feature_names=[
         "L(mm)","H1(mm) ","Bf1(mm)",
         "Bl1(mm)","t1(mm)","R1   ",
