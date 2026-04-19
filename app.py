@@ -1,25 +1,76 @@
 import streamlit as st
 import pandas as pd
 import joblib
-class CatBoostUnifiedInterface:
-    ...
+
 # =========================
-# LOAD INTERFACE
+# INTERFACE CLASS (FULL)
+# =========================
+class CatBoostUnifiedInterface:
+
+    def __init__(self, clf_model_path, reg_model_path,
+                 feature_names, label_names):
+
+        self.clf_model = joblib.load(clf_model_path)
+        self.reg_model = joblib.load(reg_model_path)
+
+        self.feature_names = feature_names
+        self.label_names = label_names
+
+    def _merge_input(self, input_data):
+        flat_input = {}
+        for section in input_data.values():
+            flat_input.update(section)
+        return flat_input
+
+    def predict_with_confidence(self, input_data):
+
+        flat_input = self._merge_input(input_data)
+
+        X = pd.DataFrame([flat_input])[self.feature_names]
+
+        # Classification
+        class_pred = self.clf_model.predict(X)
+        class_index = int(class_pred.flatten()[0])
+
+        probs = self.clf_model.predict_proba(X)[0]
+        confidence = float(max(probs))
+
+        failure_mode = self.label_names[class_index]
+
+        # Regression
+        ultimate_load = float(self.reg_model.predict(X)[0])
+
+        return {
+            "failure_mode": failure_mode,
+            "confidence": round(confidence, 3),
+            "ultimate_load": round(ultimate_load, 2)
+        }
+
+
+# =========================
+# FEATURE LIST (CLEANED)
+# =========================
+feature_names = [
+    "L(mm)","H1(mm)","Bf1(mm)",
+    "Bl1(mm)","t1(mm)","R1",
+    "e(mm)","a(mm)","k",
+    "p(mm)","d(mm)","LC","Fy(N/mm²)"
+]
+
+label_names = ['L', 'D', 'G', 'L+D', 'L+G', 'FT', 'L+FT']
+
+# =========================
+# LOAD MODELS
 # =========================
 interface = CatBoostUnifiedInterface(
     clf_model_path="best_catboost_classification.pkl",
     reg_model_path="best_catboost_regression.pkl",
-    feature_names=[
-        "L(mm)","H1(mm) ","Bf1(mm)",
-        "Bl1(mm)","t1(mm)","R1   ",
-        "e(mm)","a(mm)","k",
-        "p(mm)","d(mm)","LC","Fy(N/mm²)"
-    ],
-    label_names=['L', 'D', 'G', 'L+D', 'L+G', 'FT', 'L+FT']
+    feature_names=feature_names,
+    label_names=label_names
 )
 
 # =========================
-# UI
+# STREAMLIT UI
 # =========================
 st.title("Structural Failure Prediction System")
 
@@ -47,11 +98,11 @@ if st.button("Predict"):
     input_data = {
         "geometry": {
             "L(mm)": L,
-            "H1(mm) ": H1,
+            "H1(mm)": H1,
             "Bf1(mm)": Bf1,
             "Bl1(mm)": Bl1,
             "t1(mm)": t1,
-            "R1   ": R1,
+            "R1": R1,
             "e(mm)": e,
             "a(mm)": a,
             "k": k,
