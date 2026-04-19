@@ -88,7 +88,7 @@ k= st.number_input("k", value=21.0)
 p (mm)= st.number_input("p (mm)", value=12.0)
 d (mm)= st.number_input("d (mm)", value=11.0)
 LC= st.number_input("LC", value=1.0)
-Fy (N/mm²)= st.number_input("Fy (N/mm²)", value=350.0)
+Fy(N/mm²)= st.number_input("Fy(N/mm²)", value=350.0)
 
 # =========================
 # PREDICT BUTTON
